@@ -1,8 +1,8 @@
-First, let's ensure we are up-to-date (don't when you have changes that are not yet online)
+First, let's ensure we are up-to-date
 
 > git pull origin master
 
-Make new branch "gravwaves" and check it out:
+Make new branch (of a development tree) "gravwaves" and check it out (= go there):
 
 > git checkout -b gravwaves 
 
@@ -30,7 +30,7 @@ The actual change is then commited, that is a snapshot of the modification to th
 
 > git commit -m "added gw lum distance"
 
-(Here we have double-checked first that we are really on the right branch gravwaves where we want to do our changes. but this info is already given by git status, so this step is not necessary) It is important to choose a good message.
+(Here we have double-checked first that we are really on the right branch gravwaves where we want to do our changes. but this info is already given by git status, so this step is not necessary)
 
 We can now switch back and forth between the old version and the new version by changing branches. Don't do before the commit! Changes would be lost - git really changes your files on your hard drive. 
 
@@ -50,8 +50,8 @@ For the latter,
 
 > git push -u origin gravwaves
 
-(Origin is the standard name of the online version of the repository.) This makes sense if the change is big enough and important but work-in-progress with possible side effects, or a quite separate thing in general. For a small thing that will be useful in general for the project, we can integrate it locally into the main project first and only publish that. 
-That is the former option. 
+(Origin is the standard name of the online version of the repository.) This makes sense if the change is big enough and important but work-in-progress with possible side effects, or a quite separate thing in general. Note that the commit messages and the whole line of snapshots will be published, too. 
+For a small thing that will be useful in general for the project, we can integrate it locally into the main project first and only publish that. That is the former option. 
 
 For the former, go to master branch
 
