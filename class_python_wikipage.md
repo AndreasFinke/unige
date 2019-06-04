@@ -203,8 +203,8 @@ This exposes the parameter `Omega0_de` from the background structure to the samp
 Of course, new functionality, if required in a Python notebook or your own likelihood, can be added to the class `Class`, as well, e.g. 
 
 ~~~ python
-    def Omega_nlde(self):
-        return self.ba.Omega0_de 
+def Omega_nlde(self):
+    return self.ba.Omega0_de 
 ~~~
 
 
