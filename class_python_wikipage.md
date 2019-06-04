@@ -149,18 +149,58 @@ the `name` keyword defines what the cosmological parameters will be. The keyword
 
 When the code fails, it will output to a `stdout` the parameters which were used to provoke the error. Simply try them out in CLASS to identify if your modification broke something inside CLASS, or inside the wrapper.
 
-### Exposing a new parameter
+### Importing and exposing new parameters
 
-Suppose, for example, that you have modified CLASS to take into account a new dark energy model based on some modification of gravity. 
-You may have added a new fundamental input parameter `mymodel_input_par`
-that specifies the model on the background level, and you have done this by adding it to the background structure defined in `include/background.h` and using the macro 
+Suppose, for example, that we have modified CLASS to take into account a new dark energy model based on some modification of gravity. 
+To specify the equations of our model on the background level, we happen to need a new fundamental input parameter `mymodel_par`.
+We added it to the background structure defined in `include/background.h`
 ~~~ C
-class_read_double("mymodel_input_par", pba->mymodel_input_par)
-~~~ 
-This will automatically work for both, reading from `.ini` files and exposing the parameter to **Monte Python** or **_Cobaya_**, 
-which set up virtual `.ini` files. 
+struct background {
 
-Suppose now that you also have an output parameter, for example the fraction of dark energy in your model today, `Omega0_de`, which you have declared in the background structure in `include/background.h` as well. In our example, you may compute this number from a closure condition for the flat universe when CLASS is initializing, from given LCDM matter and radiation densities and `mymodel_input_par`. It would be nice to add `Omega0_de` as a derived parameter to the sampling framework. 
+// ...
+
+    double mymodel_par; 
+    
+// ... 
+
+};
+~~~ 
+
+We can now use the macro `class_read_double` to obtain the value of the parameter by modifying a function in `source/input.c` 
+~~~ C
+int input_read_parameters(
+                          struct file_content * pfc, 
+                          /* ... */
+                         ) { 
+                         
+    // ...
+
+    mymodel_par = 0.0; // default if not specified 
+    class_read_double("mymodel_par", pba->mymodel_par);
+
+    // ... 
+}
+~~~ 
+
+and we will then be able to access the value of the parameter via `pba->mymodel_par` wherever we have access to the background structure pointer `pba`. 
+
+This will not only work for reading from `.ini` files but also when calling CLASS from **Monte Python** and **_Cobaya_**, which set up virtual `.ini` files. In this way, if we want, we can estimate it by making it a sampled parameter, providing  a prior like for any other sampled parameter.  
+
+In this example, our modification introduces a new degree of freedom, and we have another parameter that relates to its initial conditions - let's say the fraction of effective dark energy at the start of the integration, `Omega_de_in`. Suppose we can compute it from a closure condition for the flat universe when CLASS is initializing, from given LCDM matter and radiation densities and `mymodel_par` (by a shooting method or backward integration after initialization of the relevant parameters, for example). It naturally sits in the background structure as well 
+~~~ C
+struct background {
+
+// ...
+
+    double mymodel_par; 
+    double Omega_de_in; 
+    
+// ... 
+
+};
+~~~ 
+
+It would be nice to add `Omega_de_in` as a derived parameter to the sampling framework, to be able to see the distribution of this parameter directly from the output of the sampler. 
 
 To do so, we repeat the declaration of the parameter from the background structure in the header file `python/cclassy.pxd`,
 
@@ -174,7 +214,7 @@ cdef extern from "class.h":
         """ 
             ...
         """
-        double Omega0_de
+        double Omega_de_in
 ~~~
 
 and add two lines to the source file `python/classy.pyx`, in the definition of the class `Class`,
@@ -188,8 +228,8 @@ def get_current_derived_parameters(self, names):
         """ 
             ...
         """
-        elif name == 'Omega_de' or name == 'Omega0_de':
-            value = self.ba.Omega0_de
+        elif name == 'Omega_de_intial':
+            value = self.ba.Omega_de_in
             
         """ 
             ...
@@ -198,15 +238,15 @@ def get_current_derived_parameters(self, names):
 
 ~~~
 
-This exposes the parameter `Omega0_de` from the background structure to the sampling framework, where it is now known as a derived parameter under the names `Omega_de` and `Omega0_de`.
+This exposes the parameter `Omega_de_in` from the background structure to the sampling framework, where it is now known as a derived parameter under the name `Omega_de_initial`.
 
 Of course, new functionality, if required in a Python notebook or your own likelihood, can be added to the class `Class`, as well, e.g. 
 
 ~~~ python
-def Omega_nlde(self):
-    return self.ba.Omega0_de 
+def Omega_de_intial(self):
+    return self.ba.Omega_de_in 
 ~~~
 
-
+to query the value of `Omega_de_in` in a notebook. 
 
 
