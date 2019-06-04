@@ -152,15 +152,61 @@ When the code fails, it will output to a `stdout` the parameters which were used
 ### Exposing a new parameter
 
 Suppose you have modified CLASS to take into account some new dark energy model based on a modification of gravity. 
-You may have added a new input parameter `mymodel_input_par`
- 
-that describe the model on the background level, by adding it to the background structure and using the macro 
+You may have added a new fundamental input parameter `mymodel_input_par`
+that specifies the model on the background level, and you have done this by adding it to the background structure defined in `include/background.h` and using the macro 
 ~~~ C
 class_read_double("mymodel_input_par", pba->mymodel_input_par)
 ~~~ 
-which will automatically work for both, reading from actual `.ini` files and exposing the parameter to Cobaya or MontePython, 
+which will automatically work for both, reading from `.ini` files and exposing the parameter to Cobaya or MontePython, 
 which set up virtual `.ini` files. 
 
-Now suppose that you also have an output parameter, for example the fraction of dark energy in your model today, 
-which in this example can be thought of 
+Now suppose that you also have an output parameter, for example the fraction of dark energy in your model today, `Omega0_de`, which you have also declared in the background structure in `include/background.h`. In our example, this number may be computed from a closure condition for the flat universe when CLASS is starting up, given LCDM matter and radiation densities and `mymodel_input_par`. It would be nice to add this quantity as a derived parameter to the sampling framework. 
+
+To do so, we repeat the declaration of the parameter from the background structure in the header file `python/cclassy.pxd`,
+
+~~~ python
+cdef extern from "class.h":
+    """ 
+        ...
+    """
+
+    cdef struct background:
+        """ 
+            ...
+        """
+        double Omega0_de
+~~~
+
+and add two lines to the source file `python/classy.pyx`, in the definition of the class `Class`,
+
+~~~ python
+def get_current_derived_parameters(self, names):
+    """ 
+        ...
+    """
+    for name in names: 
+        """ 
+            ...
+        """
+        elif name == 'Omega_de' or name == 'Omega0_de':
+            value = self.ba.Omega0_de
+            
+        """ 
+            ...
+        """
+
+
+~~~
+
+This exposes the parameter `Omega0_de` from the background structure to the sampling framework, where it is now known under the names `Omega_de` and `Omega0_de`.
+
+Of course, new functionality, if required in a python notebook or your own likelihood, can be added to the class `Class`, as well, e.g. 
+
+~~~ python
+    def Omega_nlde(self):
+        return self.ba.Omega0_de 
+~~~
+
+
+
 
