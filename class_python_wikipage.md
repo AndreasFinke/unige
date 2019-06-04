@@ -1,6 +1,6 @@
 Inside the directory `python/`, accessible from the root directory of CLASS, lives a Python wrapper written in Cython. This page details how to install and use it. It also contains instructions on how to use the testing suite that makes use of the wrapper, which might help you debugging a modification of CLASS.
 
-If you intend to use CLASS as it is through the parameter extraction codes **Cobaya** or **Monte Python**,
+If you intend to use CLASS as it is through the parameter extraction codes **Monte Python** or **_Cobaya_**,
 you do not need to understand how the wrapper works. However, if you have modified CLASS and want to expose new derived parameters, or new functionality, to the sampling frameworks, you need to make some additions to the Cython code. You can find an example of this below. 
 
 
@@ -151,16 +151,16 @@ When the code fails, it will output to a `stdout` the parameters which were used
 
 ### Exposing a new parameter
 
-Suppose you have modified CLASS to take into account a new dark energy model based on some modification of gravity. 
+Suppose, for example, that you have modified CLASS to take into account a new dark energy model based on some modification of gravity. 
 You may have added a new fundamental input parameter `mymodel_input_par`
 that specifies the model on the background level, and you have done this by adding it to the background structure defined in `include/background.h` and using the macro 
 ~~~ C
 class_read_double("mymodel_input_par", pba->mymodel_input_par)
 ~~~ 
-This will automatically work for both, reading from `.ini` files and exposing the parameter to Cobaya or MontePython, 
+This will automatically work for both, reading from `.ini` files and exposing the parameter to **Monte Python** or **_Cobaya_**, 
 which set up virtual `.ini` files. 
 
-Suppose now that you also have an output parameter, for example the fraction of dark energy in your model today, `Omega0_de`, which you have declared in the background structure in `include/background.h` as well. In our example, this number may be computed from a closure condition for the flat universe when CLASS is starting up, given LCDM matter and radiation densities and `mymodel_input_par`. It would be nice to add this quantity as a derived parameter to the sampling framework. 
+Suppose now that you also have an output parameter, for example the fraction of dark energy in your model today, `Omega0_de`, which you have declared in the background structure in `include/background.h` as well. In our example, you may compute this number from a closure condition for the flat universe when CLASS is initializing, from given LCDM matter and radiation densities and `mymodel_input_par`. It would be nice to add `Omega0_de` as a derived parameter to the sampling framework. 
 
 To do so, we repeat the declaration of the parameter from the background structure in the header file `python/cclassy.pxd`,
 
