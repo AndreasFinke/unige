@@ -153,7 +153,7 @@ When the code fails, it will output to a `stdout` the parameters which were used
 
 Suppose, for example, that we have modified CLASS to take into account a new dark energy model based on some modification of gravity. 
 To specify the equations of our model on the background level, we happen to need a new fundamental input parameter `mymodel_par`.
-We added it to the background structure defined in `include/background.h`
+We add it to the background structure defined in `include/background.h`
 ~~~ C
 struct background {
 
@@ -175,18 +175,17 @@ int input_read_parameters(
                          
     // ...
 
-    mymodel_par = 0.0; // default if not specified 
+    pba->mymodel_par = 0.0; // default if not specified 
     class_read_double("mymodel_par", pba->mymodel_par);
 
     // ... 
 }
 ~~~ 
-
 and we will then be able to access the value of the parameter via `pba->mymodel_par` wherever we have access to the background structure pointer `pba`. 
 
-This will not only work for reading from `.ini` files but also when calling CLASS from **Monte Python** and **_Cobaya_**, which set up virtual `.ini` files. In this way, if we want, we can estimate it by making it a sampled parameter, providing  a prior like for any other sampled parameter.  
+This will not only work for reading from `.ini` files but also when calling CLASS from **Monte Python** and **_Cobaya_**, which set up virtual `.ini` files. In this way, if we want, we can estimate `mymodel_par` by making it a sampled parameter, providing  a prior like for any other sampled parameter.  
 
-In this example, our modification introduces a new degree of freedom, and we have another parameter that relates to its initial conditions - let's say the fraction of effective dark energy at the start of the integration, `Omega_de_in`. Suppose we can compute it from a closure condition for the flat universe when CLASS is initializing, from given LCDM matter and radiation densities and `mymodel_par` (by a shooting method or backward integration after initialization of the relevant parameters, for example). It naturally sits in the background structure as well 
+For this example, our modification is thought of introducing a new degree of freedom, and we have another parameter that relates to the initial conditions - let's say the fraction of effective dark energy at the start of the integration, `Omega_de_in`. Suppose we can compute it from a closure condition for the flat universe when CLASS is initializing, from given LCDM matter and radiation densities and `mymodel_par` (by a shooting method or backward integration after initialization of the relevant parameters, for example). It naturally sits in the background structure as well 
 ~~~ C
 struct background {
 
