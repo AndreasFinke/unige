@@ -1,3 +1,17 @@
+Clone a repositoy: 
+
+If it is private, we need to add who we are: 
+
+> git clone https://username@github.com/user/repo.git
+
+If we want to push a change, and we need to be identified, origin needs to be set similarly: 
+
+git remote set-url origin https://username@github.com/user/repo.git
+
+
+
+
+
 First, let's ensure we are up-to-date
 
 > git pull origin master
