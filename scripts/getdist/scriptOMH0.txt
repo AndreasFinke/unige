@@ -1,0 +1,12 @@
+import getdist.plots as gplot
+import os
+
+g=gplot.getSinglePlotter(chain_dir=['/home/enis/Desktop/montepython_public-2.2.2/RT/minimal/plots/'],ratio=1)
+roots = []
+roots.append('RTmin')
+roots.append('RT64')
+params = [u'Omega_m', u'H0']
+g.settings.axes_fontsize=11
+g.plot_2d(roots, params, filled=True, lims=[0.00, 0.50, 65.50, 72.00])
+g.add_legend(['RT minimal', 'RT N=64'], legend_loc='upper right', fontsize='11');
+g.export('/home/enis/Desktop/RT/OmegaM_H0.pdf')

@@ -1,0 +1,20 @@
+import getdist.plots as gplot
+import os
+
+g=gplot.getSinglePlotter(chain_dir=['/home/enis/Desktop/montepython_public-2.2.2/RT/minimal/plots/'],ratio=1)
+samplesmin=g.sampleAnalyser.samplesForRoot('RTmin')
+pmin=samplesmin.getParams()
+sumnumin=3.0*pmin.m_ncdm
+samplesmin.addDerived(sumnumin, name='sum_mnu', label='\Sigma_{\nu }m_{\nu }')
+samples64=g.sampleAnalyser.samplesForRoot('RT64')
+p64=samples64.getParams()
+sumnu64=3.0*p64.m_ncdm
+samples64.addDerived(sumnu64, name='sum_mnu', label='\Sigma_{\nu }m_{\nu }')
+roots = []
+roots.append('RTmin')
+roots.append('RT64')
+params = [u'sum_mnu', u'H0']
+g.settings.axes_fontsize=11
+g.plot_2d(roots, params, filled=True, lims=[0.00, 0.50, 65.00, 70.00])
+g.add_legend(['RT minimal', 'RT \Delta N=64'], legend_loc='upper right', fontsize='11');
+g.export('/home/enis/Desktop/RT/mnu_H0.pdf')
