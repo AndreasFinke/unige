@@ -1,7 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
-filenames = ['rtMP/0.txt', 'rtMP/1.txt', 'rtMP/2.txt','rtMP/3.txt','rtMP/4.txt']
+directory = '/rtMP'
+filenames = list_files(directory, "txt")
+#filenames = ['rtMP/0.txt', 'rtMP/1.txt', 'rtMP/2.txt','rtMP/3.txt','rtMP/4.txt']
 likelihoods = [] #each entry a vector with the time evolution, one per file! 
 
 for filename in filenames:
